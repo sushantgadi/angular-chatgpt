@@ -2,7 +2,7 @@
   <h1>Chat-GPT Capability Demo</h1>
 </mat-toolbar>
 <section style="padding-left: 800px;">
- <label>Token:</label> <input type="text" matInput [(ngModel)]="apiToken" style="width: 500;"/>
+ <label>Token:</label> <input type="text" matInput [(ngModel)]="apiToken" (change)="listModels()" style="width: 500;"/>
 </section>
 <mat-card>
   <mat-tab-group>
