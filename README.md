@@ -2,11 +2,10 @@
 
 This project prohject is a proof of concept for ChatGPT was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.5.
 
-# Deployment As GitHUB page
+## Deployment
 
-* ng add angular-cli-ghpages
 * ng deploy --base-href=/angular-chatgpt/
-* url hosted : https://sushantgadi.github.io/Angular-ChatGPT
+* url hosted : https://sushantgadi.github.io/angular-chatgpt
 
 
 ## Development server
