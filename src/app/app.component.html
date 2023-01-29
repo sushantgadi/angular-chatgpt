@@ -1,0 +1,128 @@
+<mat-toolbar>
+  <h1>Chat-GPT Capability Demo</h1>
+</mat-toolbar>
+
+<mat-card>
+  <mat-tab-group>
+    <mat-tab label="Topic Search">
+      <form [formGroup]="topicSearchFormGroup" (ngSubmit)="createCompletion()" class="form">
+        <mat-form-field appearance="fill">
+          <mat-label>Chat-GPT model</mat-label>
+          <mat-select required formControlName="model">
+            <mat-option *ngFor="let option of models" [value]="option.id">{{option.id}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Max Tokens(Min-1, Max-4096)</mat-label>
+          <input type="number" matInput placeholder="Max Tokens" formControlName="maxTokens" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Temperature(Min-0, Max-0.9)</mat-label>
+          <input type="number" matInput placeholder="Temperature" formControlName="temperature" />
+        </mat-form-field>
+        <mat-form-field appearance="fill" [style.width.px]=500>
+          <mat-label>Search Topic</mat-label>
+          <input type="text" matInput placeholder="Search Topic" formControlName="prompt" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" color="primary" [disabled]="loading" [class.spinner]="loading">
+          Search
+        </button>
+        <mat-card class="mat-elevation-z8" *ngIf="response">
+          <mat-card-title>Search Results :</mat-card-title>
+          <mat-card-content>
+            <pre>{{response}}</pre>
+          </mat-card-content>
+        </mat-card>
+        <!-- <div *ngIf="response">
+          <pre>{{response}}</pre>
+        </div> -->
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Image Generator">
+      <form [formGroup]="imageSearchFormGroup" (ngSubmit)="createImage()" class="form">
+        <mat-form-field appearance="fill">
+          <mat-label>Image Size</mat-label>
+          <mat-select required formControlName="imageSize">
+            <mat-option *ngFor="let option of imageSizes" [value]="option">{{option}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>No Of Images(Min-1, Max-10)</mat-label>
+          <input type="number" matInput placeholder="No of Images" formControlName="noOfImage" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Response Format</mat-label>
+          <mat-select required formControlName="responseFormat">
+            <mat-option *ngFor="let option of responseFormats" [value]="option">{{option}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill" [style.width.px]=500>
+          <mat-label>Image Topic</mat-label>
+          <input type="text" matInput placeholder="Image Topic" formControlName="prompt" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" color="primary" [disabled]="loading" [class.spinner]="loading">
+          Search
+        </button>
+        <mat-grid-list cols="4">
+          <mat-grid-tile *ngFor="let option of imageResponse; let i = index" class="mat-elevation-z8">
+            <mat-card class="mat-elevation-z8">
+              <mat-card-header>
+                <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-title>Image-{{i+1}}</mat-card-title>
+              </mat-card-header>
+              <!-- {{ imageSearchFormGroup.value.responseFormat | json }} -->
+              <img *ngIf="imageSearchFormGroup.value.responseFormat === 'b64_json'" mat-card-image
+                [src]="'data:image/jpg;base64,' + option.b64_json" alt="Image">
+              <a href="{{option.url}}" target="_blank" *ngIf="imageSearchFormGroup.value.responseFormat === 'url'"><img
+                  mat-card-image [src]="option.url" alt="Image"></a>
+            </mat-card>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Image Variation">
+      <form [formGroup]="imageVariationFormGroup" class="form">
+        <mat-form-field appearance="fill">
+          <mat-label>Image Size</mat-label>
+          <mat-select required formControlName="imageSize">
+            <mat-option *ngFor="let option of imageSizes" [value]="option">{{option}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>No Of Images(Min-1, Max-10)</mat-label>
+          <input type="number" matInput placeholder="No of Images" formControlName="noOfImage" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Response Format</mat-label>
+          <mat-select required formControlName="responseFormat">
+            <mat-option *ngFor="let option of responseFormats" [value]="option">{{option}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <input hidden="true" type="file" onclick="this.value=null" (change)="imageUpload($event)" accept=".png"
+          #image />
+        <button mat-flat-button color="warn" (click)="image.click()">Select PNG Less Than 4MB </button>
+        <input type="text" class="file-name" [value]="selectedFileName" readonly />
+        <button mat-raised-button color="primary" color="primary" [disabled]="loading" [class.spinner]="loading"
+          class="generate-button" (click)="createImageVariation()">
+          Generate Variations
+        </button>
+        <mat-grid-list cols="4">
+          <mat-grid-tile *ngFor="let option of imageVariationResponse; let i = index" class="mat-elevation-z8">
+            <mat-card class="mat-elevation-z8">
+              <mat-card-header>
+                <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-title>Image-{{i+1}}</mat-card-title>
+              </mat-card-header>
+              <img *ngIf="imageVariationFormGroup.value.responseFormat === 'b64_json'" mat-card-image
+                [src]="'data:image/jpg;base64,' + option.b64_json" alt="Image">
+              <a href="{{option.url}}" target="_blank" *ngIf="imageVariationFormGroup.value.responseFormat === 'url'"><img
+                  mat-card-image [src]="option.url" alt="Image"></a>
+            </mat-card>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>

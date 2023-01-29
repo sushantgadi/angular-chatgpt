@@ -1,0 +1,52 @@
+$primary-padding: 50px;
+$form-field-right-padding: 10px;
+
+form {
+    padding: $primary-padding;
+}
+
+.results {
+    padding-left: $primary-padding;
+}
+
+pre{
+    white-space: pre-wrap;
+    font-size: 15px;
+}
+
+.mat-form-field {
+    padding-right: $form-field-right-padding;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner:before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    border-top-color: #000000;
+    animation: spinner .8s linear infinite;
+}
+
+.file-name{
+    height: 30px;
+    margin-left: 2px;
+    width: 300px;
+    border-color: #f44336;
+}
+
+.generate-button{
+    margin-left: 20px;;
+}

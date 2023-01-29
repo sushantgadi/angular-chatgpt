@@ -1,0 +1,48 @@
+https://beta.openai.com/docs/api-reference/models/list
+
+curl https://api.openai.com/v1/models \
+  -H 'Authorization: Bearer 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'
+
+https://beta.openai.com/docs/api-reference/models/retrieve
+
+curl https://api.openai.com/v1/models/text-davinci-003 \
+  -H 'Authorization: Bearer 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'
+
+
+https://beta.openai.com/docs/api-reference/completions/create
+curl https://api.openai.com/v1/completions \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer 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' \
+  -d '{
+  "model": "text-davinci-003",
+  "prompt": "Say this is a test",
+  "max_tokens": 7,
+  "temperature": 0
+}'
+
+curl https://api.openai.com/v1/images/generations \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer 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' \
+  -d '{
+  "prompt": "generate search icon",
+  "n": 2,
+  "size": "1024x1024"
+}'
+
+
+curl https://api.openai.com/v1/completions \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer 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' \
+  -d '{
+  "model": "text-davinci-003",
+  "prompt": "Say this is a test",
+  "max_tokens": 7,
+  "temperature": 0
+}'
+
+
+curl https://api.openai.com/v1/images/variations \
+  -H 'Authorization: Bearer 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' \
+  -F image='@test.png' \
+  -F n=2 \
+  -F size="256x256"
