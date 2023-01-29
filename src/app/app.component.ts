@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChatService } from './services/chat.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,7 @@ import { ChatService } from './services/chat.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  apiToken: string = environment.openapiKey;
   maxTokens: number = 1000;
   temperature: number = 0.9;
   defaultModel: string = 'text-davinci-003';
@@ -68,13 +70,13 @@ export class AppComponent implements OnInit {
 
 
   listModels() {
-    this.chatService.listModels().subscribe((response: any) => {
+    this.chatService.listModels(this.apiToken).subscribe((response: any) => {
       this.models = response.data;
     });
   }
 
   retrieveModel(model: string) {
-    this.chatService.retrieveModel(model).subscribe((response: any) => {
+    this.chatService.retrieveModel(model, this.apiToken).subscribe((response: any) => {
       this.models = response;
     });
   }
@@ -85,7 +87,7 @@ export class AppComponent implements OnInit {
     this.chatService.createCompletion(this.topicSearchFormGroup.get('prompt')?.value,
       this.topicSearchFormGroup.get('model')?.value,
       this.topicSearchFormGroup.get('maxTokens')?.value,
-      this.topicSearchFormGroup.get('temperature')?.value).subscribe({
+      this.topicSearchFormGroup.get('temperature')?.value, this.apiToken).subscribe({
         next: (response: any) => {
           this.response = response?.['choices'][0]['text'];
           this.loading = false;
@@ -103,7 +105,7 @@ export class AppComponent implements OnInit {
     this.chatService.createImage(this.imageSearchFormGroup.get('prompt')?.value,
       this.imageSearchFormGroup.get('noOfImage')?.value,
       this.imageSearchFormGroup.get('imageSize')?.value,
-      this.imageSearchFormGroup.get('responseFormat')?.value).subscribe({
+      this.imageSearchFormGroup.get('responseFormat')?.value, this.apiToken).subscribe({
         next: (response: any) => {
           this.imageResponse = response?.data;
           this.loading = false;
@@ -132,7 +134,7 @@ export class AppComponent implements OnInit {
     formData.append('size', this.imageSearchFormGroup.get('imageSize')?.value);
 
 
-    this.chatService.createImageVariation(formData).subscribe({
+    this.chatService.createImageVariation(formData, this.apiToken).subscribe({
       next: (response: any) => {
         this.imageVariationResponse = response?.data;
         this.loading = false;
