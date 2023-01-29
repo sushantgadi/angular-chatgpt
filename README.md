@@ -6,6 +6,7 @@ This project prohject is a proof of concept for ChatGPT was generated with [Angu
 
 * ng add angular-cli-ghpages
 * ng deploy --base-href=/Angular-ChatGPT/
+* url hosted : https://sushantgadi.github.io/Angular-ChatGPT
 
 
 ## Development server
