@@ -9,7 +9,7 @@ import { ChatService } from './services/chat.service';
 })
 export class AppComponent implements OnInit {
   maxTokens: number = 1000;
-  temperature: number = 0;
+  temperature: number = 0.9;
   defaultModel: string = 'text-davinci-003';
   imageSizes: Array<string> = ['256x256', '512x512', '1024x1024'];
   defaultImageSize: string = '256x256';

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  openapiKey: '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',
+  openapiKey: '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',
 };
