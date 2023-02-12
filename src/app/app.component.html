@@ -6,6 +6,74 @@
 </section>
 <mat-card>
   <mat-tab-group>
+
+    <mat-tab label="Document Story">
+      <form [formGroup]="documentStoryFormGroup" class="form">
+        <input hidden="true" type="file" onclick="this.value=null" (change)="imageUploadStory($event)" accept=".png"
+          #image />
+        <button mat-flat-button color="warn" (click)="image.click()">Select Document</button>
+        <input type="text" class="file-name" [value]="selectedFileName" readonly />
+        <mat-form-field appearance="fill" style="padding-left: 5px;">
+          <mat-label>Chat-GPT model</mat-label>
+          <mat-select required formControlName="model">
+            <mat-option *ngFor="let option of models" [value]="option.id">{{option.id}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Max Tokens(Min-1, Max-4096)</mat-label>
+          <input type="number" matInput placeholder="Max Tokens" formControlName="maxTokens" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Temperature(Min-0, Max-0.9)</mat-label>
+          <input type="number" matInput placeholder="Temperature" formControlName="temperature" />
+        </mat-form-field>
+        <mat-form-field appearance="fill" [style.width.px]=500>
+          <mat-label>Append Text</mat-label>
+          <input type="text" matInput placeholder="Search Topic" formControlName="appendText" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" color="primary" [disabled]="loading" [class.spinner]="loading"
+          class="generate-button" (click)="getDocumentStory()">
+          Generate Story
+        </button>
+
+        <mat-grid-list cols="12" style="padding-top: 20px; max-height: 250px; overflow: scroll;">
+          <mat-card class="mat-elevation-z8">
+            <mat-card-content>
+                <pre>Document Type : {{this.selectFileType}}</pre>
+                <pre>Extracted Text : {{this.extractedFileText}}</pre>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-list>
+
+        <mat-grid-list cols="12" style="padding-top: 20px;">
+          <mat-card class="mat-elevation-z8">
+            <mat-card-header>
+              <b><u>Document Story</u></b>
+            </mat-card-header>
+            <mat-card-content>
+              <b><pre style="padding-left: 20px;">{{response}}</pre></b>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-list>
+
+
+        <mat-grid-list cols="4">
+          <mat-grid-tile *ngFor="let option of imageVariationResponse; let i = index" class="mat-elevation-z8">
+            <mat-card class="mat-elevation-z8">
+              <mat-card-header>
+                <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-title>Image-{{i+1}}</mat-card-title>
+              </mat-card-header>
+              <img *ngIf="imageVariationFormGroup.value.responseFormat === 'b64_json'" mat-card-image
+                [src]="'data:image/jpg;base64,' + option.b64_json" alt="Image">
+              <a href="{{option.url}}" target="_blank" *ngIf="imageVariationFormGroup.value.responseFormat === 'url'"><img
+                  mat-card-image [src]="option.url" alt="Image"></a>
+            </mat-card>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </form>
+    </mat-tab>
+
     <mat-tab label="Topic Search">
       <form [formGroup]="topicSearchFormGroup" (ngSubmit)="createCompletion()" class="form">
         <mat-form-field appearance="fill">

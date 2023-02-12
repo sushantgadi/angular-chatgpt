@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChatService } from './services/chat.service';
 import { environment } from '../environments/environment';
+import { TextExtractorService } from './services/text-extractor.service';
 
 @Component({
   selector: 'app-root',
@@ -25,21 +26,34 @@ export class AppComponent implements OnInit {
   models: any;
   selectedFileName: string = 'No File Selected';
   selectedFile: any;
+  selectFileType: string = "";
+  extractedFileText: string = "";
 
   loading: boolean = false;
 
+  documentStoryFormGroup!: FormGroup;
   topicSearchFormGroup!: FormGroup;
   imageSearchFormGroup!: FormGroup;
   imageVariationFormGroup!: FormGroup;
 
 
-  constructor(private chatService: ChatService, private formBuilder: FormBuilder) { }
+  constructor(private chatService: ChatService, private textExtractorService: TextExtractorService, private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     this.createTopicSearchForm();
     this.createImageSearchForm();
     this.createImageVariationForm();
+    this.createDocumentStoryForm();
     this.listModels();
+  }
+
+  createDocumentStoryForm() {
+    this.documentStoryFormGroup = this.formBuilder.group({
+      'model': [this.defaultModel, Validators.required],
+      'maxTokens': [this.maxTokens, [Validators.required, Validators.max(4096), Validators.min(1)]],
+      'temperature': [this.temperature, [Validators.required, Validators.max(0.9), Validators.min(0)]],
+      'appendText': ['create a detailed story for below document ', Validators.required]
+    });
   }
 
   createTopicSearchForm() {
@@ -100,6 +114,26 @@ export class AppComponent implements OnInit {
       });
   }
 
+  getDocumentStory() {
+    this.loading = true;
+    let text = this.documentStoryFormGroup.get('appendText')?.value + this.extractedFileText;
+    this.response = 'Loading....';
+    this.chatService.createCompletion(text,
+      this.documentStoryFormGroup.get('model')?.value,
+      this.documentStoryFormGroup.get('maxTokens')?.value,
+      this.documentStoryFormGroup.get('temperature')?.value, this.apiToken).subscribe({
+        next: (response: any) => {
+          this.response = response?.['choices'][0]['text'];
+          this.loading = false;
+        },
+        error: (response: any) => {
+          console.error('There was an error!', response);
+          this.response = response?.error?.error?.message;
+          this.loading = false;
+        }
+      });
+  }
+
   createImage() {
     this.loading = true;
     this.chatService.createImage(this.imageSearchFormGroup.get('prompt')?.value,
@@ -122,6 +156,21 @@ export class AppComponent implements OnInit {
     console.log(fileInputEvent.target.files);
     this.selectedFile = fileInputEvent.target.files[0];
     this.selectedFileName = this.selectedFile.name;
+  }
+
+  imageUploadStory(fileInputEvent: any) {
+    console.log(fileInputEvent.target.files);
+    this.selectedFile = fileInputEvent.target.files[0];
+    this.selectedFileName = this.selectedFile.name;
+    if (this.selectedFileName === 'eob_1.png') {
+      this.selectFileType = 'EOB(Explainantion Of Benifits)';
+      this.extractedFileText = this.textExtractorService.getText(this.selectedFileName);
+    } else if (this.selectedFileName == 'pres_1.png') {
+      this.selectFileType = 'Prescription';
+      this.extractedFileText = this.textExtractorService.getText(this.selectedFileName);
+    } else {
+     // alert("Invalid file selected.")
+    }
   }
 
   createImageVariation() {
